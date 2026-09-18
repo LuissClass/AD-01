@@ -1,4 +1,4 @@
-package clase.tema1.ej1;
+package clase.tema1.ej1_2;
 
 import java.io.Serializable;
 

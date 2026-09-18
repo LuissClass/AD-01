@@ -1,4 +1,4 @@
-package clase.tema1.ej1;
+package clase.tema1.ej1_2;
 
 import java.io.Serializable;
 
@@ -13,6 +13,13 @@ public class Producto implements Serializable {
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
+    }
+
+    @Override
+    public String toString() {
+        return  "ID: " + id +
+                ", NOMBRE: " + nombre + '\'' +
+                ", PRECIO: " + precio;
     }
 
     public int getId() { return id; }

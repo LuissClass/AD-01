@@ -1,4 +1,4 @@
-package clase.tema1.ej1;
+package clase.tema1.ej1_2;
 
 import java.util.Comparator;
 import java.util.Scanner;
@@ -22,7 +22,11 @@ public class Menu {
             System.out.println("4. Agregar Producto");
             System.out.println("5. Producto con precio más alto");
             System.out.println("6. Cliente con el nombre más largo");
-            System.out.println("7. Salir");
+            System.out.println("7. Listar Pedidos");
+            System.out.println("8. Agregar Pedido");
+            System.out.println("9. Listar Pedidos de un Cliente");
+            System.out.println("10. Listar Pedidos Detallada");
+            System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
 
             opcion = scanner.nextInt();
@@ -35,11 +39,15 @@ public class Menu {
                 case 4 -> agregarProducto(scanner);
                 case 5 -> productoPrecioMasAlto();
                 case 6 -> clienteNombreMasLargo();
-                case 7 -> System.out.println("Fin!");
+                case 7 -> listarPedidos();
+                case 8 -> agregarPedido(scanner);
+                case 9 -> listarPedidosCliente(scanner);
+                case 10 -> listarPedidosDetallada();
+                case 0 -> System.out.println("Fin!");
                 default -> System.out.println("Opción errónea, intente de nuevo.");
             }
 
-        } while (opcion != 7);
+        } while (opcion != 0);
 
         scanner.close();
     }
@@ -52,6 +60,48 @@ public class Menu {
     private void listarProductos() {
         gestorDatos.obtenerProductos()
                 .forEach(p -> System.out.println(p.getNombre()));
+    }
+
+    private void listarPedidos() {
+        System.out.println("\n--- LISTA DE PEDIDOS ---");
+        gestorDatos.obtenerPedidos()
+                .forEach(System.out::println);
+    }
+
+    private void listarPedidosDetallada() {
+        System.out.println("\n--- LISTA DE PEDIDOS DETALLADA ---");
+        String msg = "";
+
+        for (Pedido pedido : gestorDatos.obtenerPedidos()) {
+            msg += "Pedido ID: " + pedido.getId() + "\nNombre: " + pedido.getNombre() +
+                    "\nCantidad: " + pedido.getCantidad() +
+                    "\nCliente ID: " + pedido.getIdCliente();
+
+            for (Producto producto : gestorDatos.obtenerProductos()) {
+                if (producto.getId() == pedido.getIdProducto()) {
+                    msg += "\nProducto: " + producto.getNombre() + "\n\n";
+                    break;
+                }
+            }
+        }
+
+        System.out.println(msg);
+    }
+
+    private void listarPedidosCliente(Scanner scanner) {
+        System.out.print("Ingrese el id del cliente: ");
+        int idCliente = scanner.nextInt();
+
+        if (gestorDatos.existeCliente(idCliente)) {
+            System.out.println("\n--- LISTA DE PEDIDOS DEL CLIENTE ---");
+            gestorDatos.obtenerPedidos().stream()
+                    .filter(p -> p.getIdCliente() == idCliente)
+                    .forEach(System.out::println);
+        } else {
+            throw new IllegalArgumentException("El cliente con id " + idCliente + " no existe.");
+        }
+
+
     }
 
     private void agregarCliente(Scanner scanner) {
@@ -93,6 +143,39 @@ public class Menu {
         gestorDatos.obtenerClientes().stream()
                 .max(Comparator.comparingInt(c -> c.getNombre().length()))
                 .ifPresent(c -> System.out.println("Cliente con el nombre más largo: " + c.getNombre()));
+    }
+
+    private void agregarPedido(Scanner scanner) {
+        int id;
+        String nombre;
+        int cantidad;
+        int idCliente;
+        int idProducto;
+        System.out.print("Ingrese el id del pedido: ");
+        id = scanner.nextInt();
+        scanner.nextLine();
+
+        if (gestorDatos.existePedido(id)) {
+            throw new IllegalArgumentException("El pedido con id " + id + " ya existe.");
+        }
+
+        System.out.print("Ingrese el nombre del pedido: ");
+        nombre = scanner.nextLine();
+
+        System.out.print("Ingrese la cantidad del pedido: ");
+        cantidad = scanner.nextInt();
+
+        System.out.print("Ingrese el id del cliente: ");
+        idCliente = scanner.nextInt();
+
+        if (!gestorDatos.existeCliente(idCliente)) {
+            throw new IllegalArgumentException("El cliente con id " + id + " no existe.");
+        }
+
+        System.out.print("Ingrese el id del producto: ");
+        idProducto = scanner.nextInt();
+
+        gestorDatos.agregarPedido(new Pedido(id, nombre, cantidad, idCliente, idProducto));
     }
 }
 

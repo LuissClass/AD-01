@@ -1,14 +1,17 @@
-package clase.tema1.ej1;
+package clase.tema1.ej1_2;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class GestorDatos {
     private List<Cliente> clientes;
     private List<Producto> productos;
+    private List<Pedido> pedidos;
 
     public GestorDatos() {
         clientes = new ArrayList<>();
         productos = new ArrayList<>();
+        pedidos = new ArrayList<>();
         cargarDatosIniciales();
     }
 
@@ -34,6 +37,17 @@ public class GestorDatos {
         productos.add(new Producto(8, "Impresora multifunción", 129.50));
         productos.add(new Producto(9, "Alfombrilla gaming", 12.99));
         productos.add(new Producto(10, "Hub USB 3.0", 17.49));
+
+        pedidos.add(new Pedido(1, "Pedido ratón para Carlos", 2, 1, 1));
+        pedidos.add(new Pedido(2, "Teclado mecánico para Ana", 1, 2, 2));
+        pedidos.add(new Pedido(3, "Monitor para Maximiliano", 1, 3, 3));
+        pedidos.add(new Pedido(4, "Auriculares para Lucía", 3, 4, 4));
+        pedidos.add(new Pedido(5, "Webcam para Jorge", 1, 5, 5));
+        pedidos.add(new Pedido(6, "Silla ergonómica para Beatriz", 1, 6, 6));
+        pedidos.add(new Pedido(7, "SSD para Santiago", 2, 7, 7));
+        pedidos.add(new Pedido(8, "Impresora para Marina", 1, 8, 8));
+        pedidos.add(new Pedido(9, "Alfombrilla para Felipe", 4, 9, 9));
+        pedidos.add(new Pedido(10, "Hub USB para Valeria", 2, 10, 10));
     }
 
     public List<Cliente> obtenerClientes() {
@@ -44,7 +58,7 @@ public class GestorDatos {
         return clientes.add(cliente);
     }
 
-    private boolean existeCliente(int id) {
+    public boolean existeCliente(int id) {
         return clientes.stream().anyMatch(c -> c.getId() == id);
     }
 
@@ -56,8 +70,19 @@ public class GestorDatos {
         return productos.add(producto);
     }
 
-    private boolean existeProducto(int id) {
+    public boolean existeProducto(int id) {
         return productos.stream().anyMatch(p -> p.getId() == id);
     }
 
+    public List<Pedido> obtenerPedidos() {
+        return pedidos;
+    }
+
+    public boolean agregarPedido(Pedido pedido) {
+        return pedidos.add(pedido);
+    }
+
+    public boolean existePedido(int id) {
+        return pedidos.stream().anyMatch(p -> p.getId() == id);
+    }
 }
