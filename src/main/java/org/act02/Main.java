@@ -16,6 +16,7 @@ package org.act02;
 public class Main {
     public static void main(String[] args) {
         GestorEmpleados ge = new GestorEmpleados();
-        ge.getEmpleado(20);
+        ge.getEmpleado(5);
+        ge.insertarEmpleado();
     }
 }
