@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
 import java.util.Scanner;
 
 public class GestorEmpleados {
@@ -67,12 +68,48 @@ public class GestorEmpleados {
         }
     }
 
+    private List<StringBuilder> getAllEmpleados() {
+        List<StringBuilder> empleados = null;
+        StringBuilder empleado;
+
+        try {
+            RandomAccessFile raf = new RandomAccessFile(fichero, "r");
+
+            String apellido, depto;
+            Double salario;
+            int idAux;
+
+            for (;;) {
+                String[] data = raf.readLine().split(",");
+                idAux = Integer.parseInt(data[0]);
+                apellido = data[1];
+                depto = data[2];
+                salario = Double.parseDouble(data[3]);
+
+                empleado = new StringBuilder();
+                empleado.append("EMPLEADO CON ID " + idAux + ": ");
+                empleado.append("\tAPELLIDO: " + apellido);
+                empleado.append("\tDEPTO: " + depto);
+                empleado.append("\tSALARIO: " + salario + "\n");
+
+                empleados.add(empleado);
+                System.out.println(empleado);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("FileNotFoundException AL OBTENER TODOS LOS EMPLEADOS: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IOException AL OBTENER TODOS LOS EMPLEADOS: " + e.getMessage());
+        }
+        return empleados;
+    }
+
     void insertarEmpleado() {
         Scanner sc = new Scanner(System.in);
         String apellido, depto;
         Double salario;
 
-        try {
+
+        try (RandomAccessFile raf = new RandomAccessFile(fichero, "rw")){
             System.out.println("INTRODUZCA EL APELLIDO DEL EMPLEADO: ");
             apellido = sc.next();
             System.out.println("INTRODUZCA EL DEPARTAMENTO DEL EMPLEADO: ");
@@ -80,17 +117,12 @@ public class GestorEmpleados {
             System.out.println("INTRODUZCA EL SALARIO DEL EMPLEADO: ");
             salario = Double.parseDouble(sc.next());
 
-            RandomAccessFile raf = new RandomAccessFile(fichero, "rw");
+            String empleado = 40 + "," + apellido + "," + depto + "," + salario;
+            raf.seek(raf.length()+1);
+            raf.writeUTF(empleado);
 
-            StringBuffer buffer = new StringBuffer(idEmpleado + "," + apellido + "," + depto + "," + salario);
-            raf.writeChars(buffer.toString());
-
-            raf.close();
-            getEmpleado(idEmpleado);
-            idEmpleado++;
-        } catch (Exception e) {
-            System.out.println("SE PRODUJO UN ERROR AL INSERTAR EL EMPLEADO: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IOException AL INSERTAR EL EMPLEADO: " + e.getMessage());
         }
-
     }
 }
