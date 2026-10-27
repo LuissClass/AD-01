@@ -475,11 +475,11 @@ public class Main {
 
             switch (opcion) {
                 case 33:
-                    //OperacionesXML.opcion1_Departamentos();
+                    OperacionesXML.DeptMayorYGuadalajara();
                     break;
 
                 case 34:
-                    //OperacionesXML.opcion2_Departamentos();
+                    OperacionesXML.ListarXML();
                     break;
 
                 case 35:
