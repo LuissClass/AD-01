@@ -8,6 +8,12 @@ import java.util.Scanner;
 
 public class OperacionesAleatorios {
 
+    static final File FICHERO_DIRECTO = new File("alumnos.dat");
+    static final int NOMBRE_LEN = 20;   // caracteres del nombre
+    static final int FECHA_LEN = 10;    // dd-MM-yyyy
+    // int (4) + nombre (20 chars * 2 bytes) + fecha (10 chars * 2 bytes) = 64 bytes
+    static final int TAM_DIRECTO = 4 + NOMBRE_LEN * 2 + FECHA_LEN * 2;
+
     static void escribirEmpleado(File fichero) throws IOException {
         //declara el fichero de acceso aleatorio
         RandomAccessFile file = new RandomAccessFile(fichero, "rw");
@@ -53,6 +59,8 @@ public class OperacionesAleatorios {
         }
         file.close();  //cerrar fichero
     }
+
+
 
     void leerFich(File fichero) throws IOException {
         //declara el fichero de acceso aleatorio
@@ -199,4 +207,127 @@ public class OperacionesAleatorios {
             file.close();  //cerrar fichero
         }
 
+    public static void grabarFicheroDirecto(Scanner sc) {
+        System.out.print("Ruta del fichero: ");
+        File fichero = new File(sc.nextLine());
+
+        try (RandomAccessFile file = new RandomAccessFile(fichero, "rw")) {
+            for (int n = 0; n < 2; n++) {   // mínimo 2 alumnos
+                System.out.print("Codigo: ");
+                int codigo = Integer.parseInt(sc.nextLine());
+                System.out.print("Nombre: ");
+                String nombre = sc.nextLine();
+                System.out.print("Fecha nacimiento: ");
+                String fecha = sc.nextLine();
+
+                long posicion = (long) (codigo - 1) * TAM_DIRECTO;
+
+                // Comprobar que no exista ya ese código
+                if (posicion < file.length()) {
+                    file.seek(posicion);
+                    if (file.readInt() != 0) {
+                        System.out.println("El codigo " + codigo + " ya existe.");
+                        n--;
+                        continue;
+                    }
+                }
+
+                file.seek(posicion);
+                file.writeInt(codigo);
+
+                StringBuffer bNombre = new StringBuffer(nombre);
+                bNombre.setLength(NOMBRE_LEN);
+                file.writeChars(bNombre.toString());
+
+                StringBuffer bFecha = new StringBuffer(fecha);
+                bFecha.setLength(FECHA_LEN);
+                file.writeChars(bFecha.toString());
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error al grabar: " + e.getMessage());
+        }
+    }
+
+    public static void visualizarFicheroDirecto(Scanner sc) {
+        System.out.print("Ruta del fichero: ");
+        File fichero = new File(sc.nextLine());
+
+        if (!fichero.exists()) {
+            System.out.println("El fichero no existe.");
+            return;
+        }
+        try (RandomAccessFile file = new RandomAccessFile(fichero, "r")) {
+            System.out.println("LISTADO COMPLETO");
+            long posicion = 0;
+            while (posicion < file.length()) {
+                file.seek(posicion);
+                int codigo = file.readInt();
+
+                char[] nombre = new char[NOMBRE_LEN];
+                for (int i = 0; i < NOMBRE_LEN; i++) nombre[i] = file.readChar();
+                char[] fecha = new char[FECHA_LEN];
+                for (int i = 0; i < FECHA_LEN; i++) fecha[i] = file.readChar();
+
+                if (codigo != 0) {   // 0 = hueco vacío
+                    System.out.printf("%3d  %s  %s%n", codigo,
+                            new String(nombre).replace('\u0000', ' ').trim(),
+                            new String(fecha).replace('\u0000', ' ').trim());
+                }
+                posicion += TAM_DIRECTO;
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer: " + e.getMessage());
+        }
+    }
+
+    public static void buscarSecuencial(Scanner sc) {
+        System.out.print("Ruta del fichero: ");
+        File fichero = new File(sc.nextLine());
+
+        if (!fichero.exists()) {
+            System.out.println("El fichero no existe.");
+            return;
+        }
+        System.out.print("Nombre a buscar: ");
+        String buscado = sc.nextLine().trim();
+
+        try (RandomAccessFile file = new RandomAccessFile(fichero, "rw")) {
+            long posicion = 0;
+            boolean modificado = false;
+
+            while (posicion < file.length() && !modificado) {
+                file.seek(posicion);
+                int codigo = file.readInt();
+
+                char[] nombre = new char[NOMBRE_LEN];
+                for (int i = 0; i < NOMBRE_LEN; i++) nombre[i] = file.readChar();
+                char[] fecha = new char[FECHA_LEN];
+                for (int i = 0; i < FECHA_LEN; i++) fecha[i] = file.readChar();
+
+                String nombreS = new String(nombre).replace('\u0000', ' ').trim();
+                String fechaS = new String(fecha).replace('\u0000', ' ').trim();
+
+                if (codigo != 0 && nombreS.equalsIgnoreCase(buscado)) {
+                    System.out.printf("%3d  %s  %s%n", codigo, nombreS, fechaS);
+                    System.out.print("¿Es este? (SI/NO): ");
+                    String resp = sc.nextLine().trim();
+
+                    if (resp.equalsIgnoreCase("SI")) {
+                        System.out.print("Nuevo codigo: ");
+                        int nuevo = Integer.parseInt(sc.nextLine());
+                        file.seek(posicion);
+                        file.writeInt(nuevo);
+                        modificado = true;
+                    }
+                }
+                posicion += TAM_DIRECTO;
+            }
+
+            if (!modificado) {
+                System.out.println("El nombre '" + buscado + "' no se encuentra en el fichero.");
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error en la busqueda: " + e.getMessage());
+        }
+    }
 }

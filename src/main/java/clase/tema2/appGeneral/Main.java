@@ -1,6 +1,12 @@
 
 package clase.tema2.appGeneral;
 
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -434,15 +440,15 @@ public class Main {
 
             switch (opcion) {
                 case 1:
-                    //OperacionesAleatorios.grabarFicheroDirecto(sc);
+                    OperacionesAleatorios.grabarFicheroDirecto(sc);
                     break;
 
                 case 2:
-                    //OperacionesAleatorios.visualizarFicheroDirecto();
+                    OperacionesAleatorios.visualizarFicheroDirecto(sc);
                     break;
 
                 case 3:
-                    //OperacionesAleatorios.buscarSecuencial(sc);
+                    OperacionesAleatorios.buscarSecuencial(sc);
                     break;
 
                 case 4:
@@ -483,7 +489,15 @@ public class Main {
                     break;
 
                 case 35:
-                    //OperacionesXML.opcion3_Ciclos(sc);
+                    try {
+                        operacionesCiclosXML();
+                    } catch (ParserConfigurationException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } catch (SAXException e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
 
                 case 36:
@@ -494,6 +508,48 @@ public class Main {
             }
 
         } while (opcion != 36);
+    }
+
+    private static void operacionesCiclosXML() throws ParserConfigurationException, IOException, SAXException {
+        try {
+
+            Scanner sc = new Scanner(System.in);
+
+            System.out.println("Introduce la ruta del fichero XML:");
+            String nombreFichero = sc.nextLine();
+
+            // Leer el XML
+            DocumentBuilderFactory factory =
+                    DocumentBuilderFactory.newInstance();
+
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            Document document = builder.parse(new File(nombreFichero));
+
+            document.getDocumentElement().normalize();
+
+            // PASO 1: Mostrar ciclos
+            System.out.println("CICLOS FORMATIVOS:");
+            OperacionesXML.mostrarCiclos(document);
+
+            // PASO 2: Añadir nuevo ciclo
+            System.out.println("AÑADIR NUEVO CICLO:");
+            OperacionesXML.addNuevoCiclo(document);
+
+            // PASO 3: Modificar alumnos del ciclo con ID 3
+            System.out.println("MODIFICAR NÚMERO DE ALUMNOS:");
+            OperacionesXML.modificarNumAlumnos(document);
+
+            // PASO 4: Guardar los cambios
+            System.out.println("GUARDAR DOCUMENTO:");
+            OperacionesXML.guardarXML(document);
+
+            System.out.println("Ejercicio realizado correctamente.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
 

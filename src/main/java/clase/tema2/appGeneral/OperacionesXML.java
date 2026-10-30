@@ -26,17 +26,159 @@ public class OperacionesXML {
         return valornodo.getNodeValue();
     }
 
-    private void GuardarXML(Document doc, String nombreFichero) throws Exception {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-        transformer.transform(
-                new DOMSource(doc),
-                new StreamResult(new File(nombreFichero))
-        );
+    public static void mostrarCiclos(Document doc) {
 
-        System.out.println("Archivo guardado con éxito.");
+        NodeList listaCiclosFormativos =
+                doc.getElementsByTagName("cicloformativo");
+
+        for (int i = 0; i < listaCiclosFormativos.getLength(); i++) {
+
+            Node nodo = listaCiclosFormativos.item(i);
+
+            if (nodo.getNodeType() == Node.ELEMENT_NODE) {
+
+                Element cicloformativo = (Element) nodo;
+
+                String id = cicloformativo.getAttribute("id");
+
+                String nombre = cicloformativo.getElementsByTagName("nombre")
+                        .item(0).getTextContent();
+
+                String instituto = cicloformativo.getElementsByTagName("instituto")
+                        .item(0).getTextContent();
+
+                String curso = cicloformativo.getElementsByTagName("curso")
+                        .item(0).getTextContent();
+
+                String localidad = cicloformativo.getElementsByTagName("localidad")
+                        .item(0).getTextContent();
+
+                String numalumnos = cicloformativo.getElementsByTagName("numalumnos")
+                        .item(0).getTextContent();
+
+                System.out.println("ID: " + id);
+                System.out.println("Nombre: " + nombre);
+                System.out.println("Instituto: " + instituto);
+                System.out.println("Curso: " + curso);
+                System.out.println("Localidad: " + localidad);
+                System.out.println("Número de alumnos: " + numalumnos);
+                System.out.println("-----------------------------");
+            }
+        }
+    }
+
+    public static void addNuevoCiclo(Document doc) {
+
+        System.out.println("Introduce el nombre del ciclo: ");
+        String nombreCiclo = sc.nextLine();
+
+        System.out.println("Introduce el instituto: ");
+        String instituto = sc.nextLine();
+
+        System.out.println("Introduce el curso: ");
+        String curso = sc.nextLine();
+
+        System.out.println("Introduce la localidad: ");
+        String localidad = sc.nextLine();
+
+        System.out.println("Introduce el número de alumnos: ");
+        String numalumnos = sc.nextLine();
+
+        // Crear el nuevo cicloformativo
+        Element nuevocicloformativo =
+                doc.createElement("cicloformativo");
+
+        // Añadir el atributo id
+        nuevocicloformativo.setAttribute("id", "5");
+
+        // Crear el elemento nombre
+        Element nombre = doc.createElement("nombre");
+        nombre.appendChild(doc.createTextNode(nombreCiclo));
+        nuevocicloformativo.appendChild(nombre);
+
+        // Crear el elemento instituto
+        Element elementoInstituto = doc.createElement("instituto");
+        elementoInstituto.appendChild(doc.createTextNode(instituto));
+        nuevocicloformativo.appendChild(elementoInstituto);
+
+        // Crear el elemento curso
+        Element elementoCurso = doc.createElement("curso");
+        elementoCurso.appendChild(doc.createTextNode(curso));
+        nuevocicloformativo.appendChild(elementoCurso);
+
+        // Crear el elemento localidad
+        Element elementoLocalidad = doc.createElement("localidad");
+        elementoLocalidad.appendChild(doc.createTextNode(localidad));
+        nuevocicloformativo.appendChild(elementoLocalidad);
+
+        // Crear el elemento numalumnos
+        Element elementoNumalumnos = doc.createElement("numalumnos");
+        elementoNumalumnos.appendChild(doc.createTextNode(numalumnos));
+        nuevocicloformativo.appendChild(elementoNumalumnos);
+
+        // Añadir el nuevo ciclo al documento
+        doc.getDocumentElement().appendChild(nuevocicloformativo);
+
+        System.out.println("Nuevo ciclo añadido correctamente.");
+    }
+
+    public static void modificarNumAlumnos(Document doc) {
+
+        NodeList listaCiclosFormativos =
+                doc.getElementsByTagName("cicloformativo");
+
+        for (int i = 0; i < listaCiclosFormativos.getLength(); i++) {
+
+            Node nodo = listaCiclosFormativos.item(i);
+
+            if (nodo.getNodeType() == Node.ELEMENT_NODE) {
+
+                Element cicloformativo = (Element) nodo;
+
+                String id = cicloformativo.getAttribute("id");
+
+                if (id.equals("3")) {
+
+                    cicloformativo.getElementsByTagName("numalumnos")
+                            .item(0).setTextContent("25");
+
+                    System.out.println("Número de alumnos modificado.");
+                }
+            }
+        }
+    }
+
+    public static void guardarXML(Document doc) {
+
+        try {
+
+            Scanner sc = new Scanner(System.in);
+            String rutaGuardar = sc.nextLine();
+
+
+            TransformerFactory transformerFactory =
+                    TransformerFactory.newInstance();
+
+            Transformer transformer =
+                    transformerFactory.newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            transformer.setOutputProperty(
+                    "{http://xml.apache.org/xslt}indent-amount", "4");
+
+            DOMSource source = new DOMSource(doc);
+
+            StreamResult result = new StreamResult(
+                    new File(rutaGuardar));
+
+            transformer.transform(source, result);
+
+            System.out.println("Archivo XML guardado correctamente.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void ListarXML () {
@@ -66,6 +208,8 @@ public class OperacionesXML {
             e.printStackTrace();
         }
     }
+
+
 
     public static void DeptMayorYGuadalajara() {
         System.out.println("Ruta fichero DEPARTAMENTOS: ");
@@ -108,4 +252,6 @@ public class OperacionesXML {
             e.printStackTrace();
         }
     }
+
+
 }
