@@ -176,8 +176,7 @@ public class Main {
 
             switch (opcion) {
                 case 1:
-                    cs.imprimirNodos(
-                            cs.mostrarCuentasAhorro(archivo));
+                    cs.mostrarCuentasAhorro(archivo);
                     break;
 
                 case 2:
@@ -185,8 +184,7 @@ public class Main {
                     break;
 
                 case 3:
-                    cs.imprimirNodos(
-                            cs.mostrarCuentasPensionesSUC3(archivo));
+                    cs.mostrarCuentasPensionesSUC3(archivo);
                     break;
 
                 case 4:
@@ -194,23 +192,19 @@ public class Main {
                     break;
 
                 case 5:
-                    cs.imprimirNodos(
-                            cs.mostrarSucursalesMasDe3Cuentas(archivo));
+                    cs.mostrarSucursalesMasDe3Cuentas(archivo);
                     break;
 
                 case 6:
-                    cs.imprimirNodos(
-                            cs.mostrarSucursalesMasDe3CuentasAhorro(archivo));
+                    cs.mostrarSucursalesMasDe3CuentasAhorro(archivo);
                     break;
 
                 case 7:
-                    cs.imprimirNodos(
-                            cs.mostrarDirectorYPoblacionMasDe3Cuentas(archivo));
+                    cs.mostrarDirectorYPoblacionMasDe3Cuentas(archivo);
                     break;
 
                 case 8:
-                    System.out.println("Sucursales de Madrid: "
-                            + cs.contarSucursalesMadrid(archivo));
+                    cs.contarSucursalesMadrid(archivo);
                     break;
 
                 case 0:
