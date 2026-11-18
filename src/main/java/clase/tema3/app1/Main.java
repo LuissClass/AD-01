@@ -1,5 +1,5 @@
 
-package clase.tema3;
+package clase.tema3.app1;
 
 import java.util.Scanner;
 

@@ -1,6 +1,5 @@
-package clase.tema3;
+package clase.tema3.app1;
 
-import net.sf.saxon.dom.DOMNodeList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

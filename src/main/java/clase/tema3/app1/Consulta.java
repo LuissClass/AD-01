@@ -1,4 +1,4 @@
-package clase.tema3;
+package clase.tema3.app1;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
